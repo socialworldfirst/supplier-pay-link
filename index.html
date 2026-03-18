@@ -1,0 +1,1534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Payment Request — WorldFirst</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: #1A1A1A;
+    background: #F5F6F8;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+
+  /* Entry selector (demo only) */
+  .entry-selector {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    background: #1A1A1A;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 16px;
+    font-size: 12px;
+    z-index: 100;
+    letter-spacing: 0.02em;
+  }
+  .entry-selector span { color: #888; }
+  .entry-btn {
+    background: transparent;
+    border: 1px solid #444;
+    color: #ccc;
+    padding: 4px 14px;
+    border-radius: 4px;
+    font-size: 11px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .entry-btn:hover { border-color: #888; color: #fff; }
+  .entry-btn.active { background: #FF0051; border-color: #FF0051; color: #fff; }
+
+  /* ===== EMAIL MOCKUP ===== */
+  .email-mockup {
+    display: none;
+    max-width: 560px;
+    margin: 72px auto 40px;
+    background: #fff;
+    border: 1px solid #E5E7EB;
+  }
+  .email-mockup.visible { display: block; }
+  .email-header {
+    padding: 24px 32px;
+    border-bottom: 1px solid #E5E7EB;
+  }
+  .email-logo-img { height: 24px; }
+  .email-body {
+    padding: 40px 32px;
+    text-align: center;
+  }
+  .email-body h2 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1A1A1A;
+    margin-bottom: 6px;
+    letter-spacing: -0.01em;
+  }
+  .email-amount {
+    font-size: 36px;
+    font-weight: 700;
+    color: #1A1A1A;
+    letter-spacing: -0.03em;
+    margin: 16px 0 8px;
+  }
+  .email-amount span {
+    font-size: 20px;
+    color: #6B7280;
+    font-weight: 400;
+  }
+  .email-verified-hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: #F0FDF4;
+    color: #16A34A;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 5px 12px;
+    border-radius: 4px;
+    margin-bottom: 28px;
+  }
+  .email-verified-hint svg { width: 13px; height: 13px; flex-shrink: 0; }
+  .email-details {
+    text-align: left;
+    border-top: 1px solid #F0F0F0;
+    border-bottom: 1px solid #F0F0F0;
+    padding: 20px 0;
+    margin: 0 0 32px;
+  }
+  .email-detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    font-size: 13px;
+  }
+  .email-detail-row .label { color: #6B7280; }
+  .email-detail-row .value { font-weight: 500; }
+  .email-pay-btn {
+    display: inline-block;
+    background: #FF0051;
+    color: #fff;
+    padding: 14px 64px;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    font-family: inherit;
+    transition: background 0.15s;
+  }
+  .email-pay-btn:hover { background: #E0004A; }
+  .email-methods {
+    margin-top: 24px;
+    font-size: 12px;
+    color: #9CA3AF;
+  }
+  .email-methods-icons {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 8px;
+  }
+  .email-methods-icons span {
+    padding: 4px 10px;
+    border: 1px solid #E5E7EB;
+    border-radius: 4px;
+    color: #9CA3AF;
+    font-size: 11px;
+  }
+  .email-footer {
+    padding: 20px 32px;
+    border-top: 1px solid #E5E7EB;
+    text-align: center;
+    font-size: 11px;
+    color: #9CA3AF;
+    line-height: 1.6;
+  }
+  .email-footer a { color: #FF0051; text-decoration: none; }
+
+  /* ===== WHATSAPP MOCKUP ===== */
+  .wa-mockup {
+    display: none;
+    max-width: 400px;
+    margin: 72px auto 40px;
+    padding: 20px;
+  }
+  .wa-mockup.visible { display: block; }
+  .wa-bubble {
+    background: #fff;
+    border-radius: 0 12px 12px 12px;
+    padding: 14px 16px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+    max-width: 320px;
+  }
+  .wa-sender {
+    font-size: 13px;
+    font-weight: 600;
+    color: #075E54;
+    margin-bottom: 8px;
+  }
+  .wa-text {
+    font-size: 14px;
+    line-height: 1.5;
+    color: #1A1A1A;
+    margin-bottom: 12px;
+  }
+  .wa-text strong { font-weight: 600; }
+  .wa-link-preview {
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+  .wa-link-preview:hover { border-color: #FF0051; }
+  .wa-link-bar {
+    background: #F5F6F8;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .wa-link-icon {
+    width: 36px;
+    height: 36px;
+    background: #FF0051;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .wa-link-icon img { height: 20px; filter: brightness(0) invert(1); }
+  .wa-link-text { font-size: 12px; color: #6B7280; line-height: 1.4; }
+  .wa-link-text strong { color: #1A1A1A; display: block; font-size: 13px; }
+  .wa-time {
+    text-align: right;
+    font-size: 11px;
+    color: #9CA3AF;
+    margin-top: 4px;
+  }
+
+  /* ===== PORTAL ===== */
+  .portal {
+    display: none;
+    max-width: 480px;
+    margin: 72px auto 40px;
+    padding: 0 16px;
+  }
+  .portal.visible { display: block; }
+
+  .portal-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 0 24px;
+  }
+  .portal-logo-img { height: 22px; }
+  .portal-secure {
+    font-size: 11px;
+    color: #9CA3AF;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .portal-secure svg { width: 12px; height: 12px; }
+
+  /* Steps indicator */
+  .steps-bar {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 28px;
+  }
+  .step-line {
+    flex: 1;
+    height: 3px;
+    background: #E5E7EB;
+    border-radius: 2px;
+    transition: background 0.3s;
+  }
+  .step-line.done { background: #1A1A1A; }
+  .step-line.current { background: #FF0051; }
+
+  /* Step panels */
+  .step-panel { display: none; }
+  .step-panel.active {
+    display: block;
+    animation: fadeUp 0.25s ease;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .step-label {
+    font-size: 11px;
+    color: #9CA3AF;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 500;
+    margin-bottom: 6px;
+  }
+  .step-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1A1A1A;
+    letter-spacing: -0.02em;
+    margin-bottom: 4px;
+  }
+  .step-subtitle {
+    font-size: 13px;
+    color: #6B7280;
+    margin-bottom: 28px;
+    line-height: 1.5;
+  }
+
+  /* Cards */
+  .card {
+    background: #fff;
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+
+  /* Payment summary */
+  .payment-summary {
+    text-align: center;
+    padding: 28px 20px;
+  }
+  .payment-summary .from-label {
+    font-size: 12px;
+    color: #9CA3AF;
+    margin-bottom: 4px;
+  }
+  .payment-summary .from-name {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  /* Verified tag */
+  .verified-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #F0FDF4;
+    color: #16A34A;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 16px;
+    position: relative;
+    transition: background 0.15s;
+  }
+  .verified-tag:hover { background: #DCFCE7; }
+  .verified-tag svg { width: 12px; height: 12px; flex-shrink: 0; }
+  .verified-tooltip {
+    display: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1A1A1A;
+    color: #fff;
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    line-height: 1.5;
+    width: 260px;
+    text-align: left;
+    font-weight: 400;
+    z-index: 10;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+  .verified-tooltip::before {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: 50%;
+    transform: translateX(-50%) rotate(45deg);
+    width: 8px;
+    height: 8px;
+    background: #1A1A1A;
+  }
+  .verified-tag.show-tip .verified-tooltip { display: block; }
+  .payment-summary .pay-amount {
+    font-size: 40px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    margin-bottom: 4px;
+  }
+  .payment-summary .pay-currency {
+    font-size: 13px;
+    color: #6B7280;
+  }
+  .payment-info {
+    padding: 16px 20px;
+    border-top: 1px solid #F0F0F0;
+  }
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    font-size: 13px;
+  }
+  .info-row .label { color: #6B7280; }
+  .info-row .value { font-weight: 500; text-align: right; max-width: 60%; }
+
+  /* Form fields */
+  .field { margin-bottom: 16px; }
+  .field label {
+    display: block;
+    font-size: 12px;
+    color: #6B7280;
+    font-weight: 500;
+    margin-bottom: 6px;
+  }
+  .field label .optional {
+    color: #C0C0C0;
+    font-weight: 400;
+  }
+  .field input, .field select {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1px solid #D1D5DB;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: inherit;
+    color: #1A1A1A;
+    background: #fff;
+    transition: border-color 0.15s;
+    outline: none;
+  }
+  .field input:focus, .field select:focus { border-color: #1A1A1A; }
+  .field input::placeholder { color: #C0C0C0; }
+  .field-row {
+    display: flex;
+    gap: 10px;
+  }
+  .field-row .field { flex: 1; }
+  .field-hint {
+    font-size: 11px;
+    color: #9CA3AF;
+    margin-top: 4px;
+  }
+  .phone-row {
+    display: flex;
+    gap: 8px;
+  }
+  .phone-row select {
+    width: 90px;
+    flex-shrink: 0;
+    padding: 11px 8px;
+    border: 1px solid #D1D5DB;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: inherit;
+    color: #1A1A1A;
+    background: #fff;
+    outline: none;
+  }
+  .phone-row input { flex: 1; }
+
+  /* Trust card */
+  .trust-card { padding: 24px 20px; }
+  .trust-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  .trust-avatar {
+    width: 44px;
+    height: 44px;
+    background: #1A1A1A;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  .trust-name {
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .trust-location {
+    font-size: 12px;
+    color: #6B7280;
+    margin-top: 1px;
+  }
+  .trust-badges {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .trust-badge {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 13px;
+    line-height: 1.4;
+  }
+  .trust-badge .check {
+    width: 20px;
+    height: 20px;
+    background: #F0FDF4;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .trust-badge .check svg { width: 12px; height: 12px; color: #16A34A; }
+  .trust-badge .badge-label { color: #6B7280; }
+  .trust-badge .badge-value { font-weight: 500; color: #1A1A1A; }
+  .trust-divider {
+    height: 1px;
+    background: #F0F0F0;
+    margin: 16px 0;
+  }
+  .trust-stat-row {
+    display: flex;
+    justify-content: space-around;
+    text-align: center;
+    gap: 8px;
+  }
+  .trust-stat .ts-value {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1A1A1A;
+  }
+  .trust-stat .ts-label {
+    font-size: 11px;
+    color: #9CA3AF;
+    margin-top: 2px;
+  }
+
+  /* Payment options */
+  .pay-option {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px;
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .pay-option:hover { background: #FAFBFC; border-color: #D1D5DB; }
+  .pay-option.selected { border-color: #1A1A1A; background: #FAFBFC; }
+  .pay-option .po-icon {
+    width: 40px;
+    height: 40px;
+    background: #F5F6F8;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .pay-option .po-icon svg { width: 20px; height: 20px; color: #6B7280; }
+  .pay-option.selected .po-icon { background: #1A1A1A; }
+  .pay-option.selected .po-icon svg { color: #fff; }
+  .pay-option .po-body { flex: 1; }
+  .pay-option .po-name { font-size: 14px; font-weight: 500; }
+  .pay-option .po-desc { font-size: 12px; color: #9CA3AF; margin-top: 1px; }
+  .pay-option .po-right {
+    font-size: 12px;
+    color: #9CA3AF;
+    text-align: right;
+  }
+  .pay-option .po-right .highlight {
+    color: #16A34A;
+    font-weight: 500;
+  }
+  .pay-option .po-radio {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #D1D5DB;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+  }
+  .pay-option.selected .po-radio { border-color: #1A1A1A; }
+  .pay-option.selected .po-radio::after {
+    content: '';
+    width: 8px;
+    height: 8px;
+    background: #1A1A1A;
+    border-radius: 50%;
+  }
+
+  /* Method expand panels */
+  .method-expand {
+    display: none;
+    background: #FAFBFC;
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    padding: 20px;
+    margin: -4px 0 8px;
+    animation: fadeUp 0.2s ease;
+  }
+  .method-expand.show { display: block; }
+  .method-expand h4 {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+  .bank-detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    font-size: 13px;
+    border-bottom: 1px solid #EEEFF1;
+  }
+  .bank-detail-row:last-child { border-bottom: none; }
+  .bank-detail-row .bd-label { color: #6B7280; }
+  .bank-detail-row .bd-value {
+    font-family: 'SF Mono', SFMono-Regular, Menlo, monospace;
+    font-size: 12px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .copy-btn {
+    background: #1A1A1A;
+    color: #fff;
+    border: none;
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-size: 10px;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 500;
+    transition: background 0.15s;
+  }
+  .copy-btn:hover { background: #333; }
+  .bank-note {
+    margin-top: 12px;
+    padding: 10px 12px;
+    background: #FEF3C7;
+    border-radius: 6px;
+    font-size: 12px;
+    color: #92400E;
+    line-height: 1.5;
+  }
+
+  /* Card form */
+  .card-form .field { margin-bottom: 12px; }
+  .card-form .card-row { display: flex; gap: 10px; }
+  .card-form .card-row .field { flex: 1; }
+
+  /* PayPal login */
+  .paypal-login {
+    text-align: center;
+    padding: 8px 0;
+  }
+  .paypal-logo {
+    font-size: 20px;
+    font-weight: 700;
+    color: #003087;
+    margin-bottom: 16px;
+    letter-spacing: -0.02em;
+  }
+  .paypal-login .field { text-align: left; }
+  .paypal-login .pp-btn {
+    width: 100%;
+    padding: 12px;
+    background: #0070BA;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    margin-top: 4px;
+  }
+  .paypal-login .pp-link {
+    font-size: 12px;
+    color: #0070BA;
+    margin-top: 12px;
+    cursor: pointer;
+  }
+
+  /* WF upsell */
+  .wf-upsell {
+    padding: 16px;
+    background: #FFF0F3;
+    border: 1px solid #FFD6E0;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .wf-upsell strong {
+    display: block;
+    margin-bottom: 4px;
+  }
+  .wf-upsell-btn {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 8px 16px;
+    background: #FF0051;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  /* Currencies grid */
+  .currency-grid {
+    display: none;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    margin-top: 12px;
+  }
+  .currency-grid.show {
+    display: grid;
+  }
+  .currency-chip {
+    padding: 6px;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 500;
+    color: #6B7280;
+    background: #F5F6F8;
+    border-radius: 4px;
+    border: 1px solid transparent;
+  }
+  .currency-chip.local {
+    border-color: #FF0051;
+    color: #FF0051;
+    background: #FFF0F3;
+  }
+
+  /* Buttons */
+  .btn-primary {
+    width: 100%;
+    padding: 14px;
+    background: #FF0051;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    margin-top: 20px;
+    transition: background 0.15s;
+  }
+  .btn-primary:hover { background: #E0004A; }
+  .btn-primary:disabled { background: #F0F0F0; color: #C0C0C0; cursor: default; }
+
+  .btn-secondary {
+    width: 100%;
+    padding: 12px;
+    background: transparent;
+    color: #6B7280;
+    border: 1px solid #E5E7EB;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    margin-top: 8px;
+    transition: all 0.15s;
+  }
+  .btn-secondary:hover { border-color: #D1D5DB; color: #1A1A1A; }
+
+  .legal-text {
+    font-size: 11px;
+    color: #9CA3AF;
+    text-align: center;
+    margin-top: 12px;
+    line-height: 1.5;
+  }
+  .legal-text a { color: #6B7280; text-decoration: underline; }
+
+  /* Confirmation */
+  .confirmation {
+    text-align: center;
+    padding: 48px 20px;
+  }
+  .confirm-check {
+    width: 56px;
+    height: 56px;
+    background: #F0FDF4;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    animation: scaleIn 0.3s ease;
+  }
+  .confirm-check svg { width: 28px; height: 28px; color: #16A34A; }
+  .confirm-title {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .confirm-subtitle {
+    font-size: 13px;
+    color: #6B7280;
+    line-height: 1.5;
+    margin-bottom: 24px;
+  }
+  .confirm-ref {
+    display: inline-block;
+    background: #F5F6F8;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: 'SF Mono', SFMono-Regular, Menlo, monospace;
+    color: #6B7280;
+    letter-spacing: 0.02em;
+  }
+  .review-section {
+    padding: 16px 20px;
+    border-top: 1px solid #F0F0F0;
+  }
+  .review-label {
+    font-size: 11px;
+    color: #9CA3AF;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+
+  .portal-footer {
+    text-align: center;
+    padding: 32px 0;
+    font-size: 11px;
+    color: #C0C0C0;
+  }
+  .portal-footer a { color: #9CA3AF; text-decoration: none; }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: #9CA3AF;
+    text-decoration: none;
+    padding: 10px 0;
+    cursor: pointer;
+    transition: color 0.15s;
+  }
+  .back-link:hover { color: #6B7280; }
+
+  @keyframes scaleIn {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  .pay-separator {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 16px 0 12px;
+    font-size: 11px;
+    color: #C0C0C0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .pay-separator::before, .pay-separator::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #E5E7EB;
+  }
+</style>
+</head>
+<body>
+
+<!-- Demo entry selector -->
+<div class="entry-selector">
+  <span>Entry point:</span>
+  <button class="entry-btn active" onclick="showEntry('email')">Email</button>
+  <button class="entry-btn" onclick="showEntry('whatsapp')">WhatsApp</button>
+  <button class="entry-btn" onclick="showEntry('portal')">Portal (direct)</button>
+</div>
+
+<!-- ===== EMAIL NOTIFICATION ===== -->
+<div class="email-mockup visible" id="emailView">
+  <div class="email-header">
+    <img src="wf-logo-nav.webp" alt="WorldFirst" class="email-logo-img">
+  </div>
+  <div class="email-body">
+    <h2>Shenzhen Hongda Electronics<br>is requesting a payment of</h2>
+    <div class="email-amount">$6,240.00 <span>USD</span></div>
+    <div class="email-verified-hint">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+      WorldFirst Verified Supplier
+    </div>
+    <div class="email-details">
+      <div class="email-detail-row">
+        <span class="label">Description</span>
+        <span class="value">USB-C Connectors &times; 10,000 (30% deposit)</span>
+      </div>
+      <div class="email-detail-row">
+        <span class="label">Reference</span>
+        <span class="value">PO-2026-0847</span>
+      </div>
+      <div class="email-detail-row">
+        <span class="label">Request ID</span>
+        <span class="value">WF-PR-84720</span>
+      </div>
+    </div>
+    <button class="email-pay-btn" onclick="openPortal()">Pay Now</button>
+    <div class="email-methods">
+      We accept multiple payment methods
+      <div class="email-methods-icons">
+        <span>Bank transfer</span>
+        <span>Card</span>
+        <span>PayPal</span>
+        <span>WorldFirst</span>
+      </div>
+    </div>
+  </div>
+  <div class="email-footer">
+    Sent via <a href="#">WorldFirst</a>, part of Ant International.<br>
+    Questions about this request? Reply to this email.
+  </div>
+</div>
+
+<!-- ===== WHATSAPP NOTIFICATION ===== -->
+<div class="wa-mockup" id="waView">
+  <div class="wa-bubble">
+    <div class="wa-sender">Shenzhen Hongda Electronics</div>
+    <div class="wa-text">
+      Hi — your payment request for <strong>$6,240.00 USD</strong> is ready. USB-C Connectors &times; 10,000, PO-2026-0847.
+    </div>
+    <div class="wa-link-preview" onclick="openPortal()">
+      <div class="wa-link-bar">
+        <div class="wa-link-icon">
+          <img src="wf-logo-reversed.webp" alt="WF">
+        </div>
+        <div class="wa-link-text">
+          <strong>Pay securely via WorldFirst</strong>
+          pay.worldfirst.com
+        </div>
+      </div>
+    </div>
+    <div class="wa-time">08:41</div>
+  </div>
+</div>
+
+<!-- ===== PORTAL ===== -->
+<div class="portal" id="portalView">
+  <div class="portal-nav">
+    <img src="wf-logo-nav.webp" alt="WorldFirst" class="portal-logo-img">
+    <div class="portal-secure">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+      Secure payment
+    </div>
+  </div>
+
+  <div class="steps-bar">
+    <div class="step-line current" id="bar1"></div>
+    <div class="step-line" id="bar2"></div>
+    <div class="step-line" id="bar3"></div>
+    <div class="step-line" id="bar4"></div>
+  </div>
+
+  <!-- STEP 1: Review payment request -->
+  <div class="step-panel active" id="step1">
+    <div class="step-label">Step 1 of 4</div>
+    <div class="step-title">Review payment request</div>
+    <div class="step-subtitle">Confirm the details before proceeding.</div>
+
+    <div class="card" style="padding: 0; overflow: hidden;">
+      <div class="payment-summary">
+        <div class="from-label">Payment to</div>
+        <div class="from-name">Shenzhen Hongda Electronics</div>
+        <div class="verified-tag" onclick="this.classList.toggle('show-tip')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          WorldFirst Verified
+          <div class="verified-tooltip">
+            This supplier has been verified by WorldFirst. Set up your account to view their business licence, export licence, and payment history.
+          </div>
+        </div>
+        <div class="pay-amount">$6,240.00</div>
+        <div class="pay-currency">USD</div>
+      </div>
+      <div class="payment-info">
+        <div class="info-row">
+          <span class="label">Description</span>
+          <span class="value">USB-C Connectors &times; 10,000 (30% deposit)</span>
+        </div>
+        <div class="info-row">
+          <span class="label">Reference</span>
+          <span class="value">PO-2026-0847</span>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-primary" onclick="goStep(2)">Set up to pay</button>
+  </div>
+
+  <!-- STEP 2: Set up to pay -->
+  <div class="step-panel" id="step2">
+    <span class="back-link" onclick="goStep(1)">&larr; Back</span>
+    <div class="step-label">Step 2 of 4</div>
+    <div class="step-title">Set up to pay</div>
+    <div class="step-subtitle">A few details so we can process your payment and keep you updated.</div>
+
+    <div class="card" style="padding: 20px;">
+      <div class="field-row">
+        <div class="field">
+          <label>First name</label>
+          <input type="text" placeholder="John">
+        </div>
+        <div class="field">
+          <label>Last name</label>
+          <input type="text" placeholder="Miller">
+        </div>
+      </div>
+      <div class="field">
+        <label>Email</label>
+        <input type="email" placeholder="john@company.com">
+      </div>
+      <div class="field">
+        <label>Phone <span class="optional">(optional)</span></label>
+        <div class="phone-row">
+          <select id="phoneCode">
+            <option>+1</option>
+            <option>+44</option>
+            <option>+49</option>
+            <option>+61</option>
+            <option>+81</option>
+            <option>+86</option>
+          </select>
+          <input type="tel" placeholder="Phone number">
+        </div>
+      </div>
+      <div class="field">
+        <label>Country</label>
+        <select id="countrySelect" onchange="updateLocalCurrency()">
+          <option value="">Select your country</option>
+          <option value="US">United States</option>
+          <option value="GB">United Kingdom</option>
+          <option value="AU">Australia</option>
+          <option value="CA">Canada</option>
+          <option value="DE">Germany</option>
+          <option value="FR">France</option>
+          <option value="NL">Netherlands</option>
+          <option value="JP">Japan</option>
+          <option value="SG">Singapore</option>
+          <option value="HK">Hong Kong</option>
+          <option value="NZ">New Zealand</option>
+          <option value="OTHER">Other</option>
+        </select>
+      </div>
+    </div>
+
+    <button class="btn-primary" onclick="validateStep2()">Continue</button>
+    <div id="step2Error" style="display: none; font-size: 12px; color: #DC2626; text-align: center; margin-top: 8px;">Please select your country to continue.</div>
+    <div class="legal-text">
+      By continuing you agree to WorldFirst's <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+    </div>
+  </div>
+
+  <!-- STEP 3: Supplier credentials -->
+  <div class="step-panel" id="step3">
+    <span class="back-link" onclick="goStep(2)">&larr; Back</span>
+    <div class="step-label">Step 3 of 4</div>
+    <div class="step-title">About this supplier</div>
+    <div class="step-subtitle">Verified by WorldFirst. Review their credentials before you pay.</div>
+
+    <div class="card trust-card">
+      <div class="trust-header">
+        <div class="trust-avatar">SH</div>
+        <div>
+          <div class="trust-name">Shenzhen Hongda Electronics</div>
+          <div class="trust-location">Shenzhen, Guangdong, China</div>
+        </div>
+      </div>
+      <div class="trust-badges">
+        <div class="trust-badge">
+          <div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div>
+            <div class="badge-value">Business licence verified</div>
+            <div class="badge-label">Unified Social Credit Code on file</div>
+          </div>
+        </div>
+        <div class="trust-badge">
+          <div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div>
+            <div class="badge-value">Export licence verified</div>
+            <div class="badge-label">Registered with China Customs</div>
+          </div>
+        </div>
+        <div class="trust-badge">
+          <div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div>
+            <div class="badge-value">Receives payments via WorldFirst</div>
+            <div class="badge-label">Funds delivered to verified business account</div>
+          </div>
+        </div>
+      </div>
+      <div class="trust-divider"></div>
+      <div class="trust-stat-row">
+        <div class="trust-stat">
+          <div class="ts-value">3 yrs</div>
+          <div class="ts-label">With WorldFirst</div>
+        </div>
+        <div class="trust-stat">
+          <div class="ts-value">8 yrs</div>
+          <div class="ts-label">In business</div>
+        </div>
+        <div class="trust-stat">
+          <div class="ts-value">2 weeks</div>
+          <div class="ts-label">Last payment</div>
+        </div>
+        <div class="trust-stat">
+          <div class="ts-value">0</div>
+          <div class="ts-label">Disputes</div>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-primary" onclick="goStep(4)">Continue to payment</button>
+  </div>
+
+  <!-- STEP 4: Payment method -->
+  <div class="step-panel" id="step4">
+    <span class="back-link" onclick="goStep(3)">&larr; Back</span>
+    <div class="step-label">Step 4 of 4</div>
+    <div class="step-title">How would you like to pay?</div>
+    <div class="step-subtitle">Select a payment method for $6,240.00 USD.</div>
+
+    <!-- Bank Transfer -->
+    <div class="pay-option" onclick="selectPay(this, 'bank')">
+      <div class="po-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v4M12 14v4M16 14v4"/></svg>
+      </div>
+      <div class="po-body">
+        <div class="po-name">Bank transfer</div>
+        <div class="po-desc">Wire from your bank account</div>
+      </div>
+      <div class="po-right">1-3 days</div>
+      <div class="po-radio"></div>
+    </div>
+    <div class="method-expand" id="expand-bank">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <h4 style="margin: 0;">Send payment to these details</h4>
+        <button class="copy-btn" style="padding: 5px 14px; font-size: 11px;" onclick="copyAllBank(this)">Copy all</button>
+      </div>
+      <div class="bank-detail-row">
+        <span class="bd-label">Beneficiary</span>
+        <span class="bd-value">Shenzhen Hongda Electronics <button class="copy-btn" onclick="doCopy(this, 'Shenzhen Hongda Electronics')">Copy</button></span>
+      </div>
+      <div class="bank-detail-row">
+        <span class="bd-label">Bank</span>
+        <span class="bd-value">China Merchants Bank <button class="copy-btn" onclick="doCopy(this, 'China Merchants Bank')">Copy</button></span>
+      </div>
+      <div class="bank-detail-row">
+        <span class="bd-label">Account</span>
+        <span class="bd-value">7559 2810 0410 XXXX <button class="copy-btn" onclick="doCopy(this, '755928100410XXXX')">Copy</button></span>
+      </div>
+      <div class="bank-detail-row">
+        <span class="bd-label">SWIFT</span>
+        <span class="bd-value">CMBCCNBS <button class="copy-btn" onclick="doCopy(this, 'CMBCCNBS')">Copy</button></span>
+      </div>
+      <div class="bank-detail-row">
+        <span class="bd-label">Reference</span>
+        <span class="bd-value">WF-PR-84720 <button class="copy-btn" onclick="doCopy(this, 'WF-PR-84720')">Copy</button></span>
+      </div>
+      <div class="bank-note">
+        Include the reference number in your wire transfer so the payment can be matched automatically. You will be notified once the funds are received.
+      </div>
+      <button class="btn-primary" style="margin-top: 16px;" onclick="goStep(5)">I've sent the wire transfer</button>
+    </div>
+
+    <!-- Debit / Credit Card -->
+    <div class="pay-option" onclick="selectPay(this, 'card')">
+      <div class="po-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+      </div>
+      <div class="po-body">
+        <div class="po-name">Debit or credit card</div>
+        <div class="po-desc">Visa, Mastercard, Amex</div>
+      </div>
+      <div class="po-right">2.5% fee</div>
+      <div class="po-radio"></div>
+    </div>
+    <div class="method-expand" id="expand-card">
+      <div class="card-form">
+        <div class="field">
+          <label>Card number</label>
+          <input type="text" placeholder="1234 5678 9012 3456">
+        </div>
+        <div class="card-row">
+          <div class="field">
+            <label>Expiry</label>
+            <input type="text" placeholder="MM / YY">
+          </div>
+          <div class="field">
+            <label>CVC</label>
+            <input type="text" placeholder="123">
+          </div>
+        </div>
+        <div class="field">
+          <label>Name on card</label>
+          <input type="text" placeholder="John Miller">
+        </div>
+        <button class="btn-primary" style="margin-top: 8px;" onclick="goStep(5)">Pay $6,240.00</button>
+      </div>
+    </div>
+
+    <!-- PayPal -->
+    <div class="pay-option" onclick="selectPay(this, 'paypal')">
+      <div class="po-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 21l1.5-9h7c3 0 5.5-2.5 5-5.5S18 2 15.5 2H8L4.5 21H7z"/><path d="M10 12l-.5 3h5c2.5 0 4.5-2 4-4.5s-2-2.5-4-2.5h-3"/></svg>
+      </div>
+      <div class="po-body">
+        <div class="po-name">PayPal</div>
+        <div class="po-desc">Sign in and pay with PayPal</div>
+      </div>
+      <div class="po-right">Instant</div>
+      <div class="po-radio"></div>
+    </div>
+    <div class="method-expand" id="expand-paypal">
+      <div class="paypal-login">
+        <div class="paypal-logo">PayPal</div>
+        <div class="field">
+          <label>Email or phone</label>
+          <input type="text" placeholder="Email or mobile number">
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <input type="password" placeholder="Password">
+        </div>
+        <button class="pp-btn" onclick="event.stopPropagation()">Log In</button>
+        <div class="pp-link">Having trouble logging in?</div>
+      </div>
+    </div>
+
+    <div class="pay-separator">or pay with WorldFirst</div>
+
+    <!-- WorldFirst -->
+    <div class="pay-option" onclick="selectPay(this, 'wf')">
+      <div class="po-icon" style="background: #FFF0F3;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#FF0051" stroke-width="1.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      </div>
+      <div class="po-body">
+        <div class="po-name">WorldFirst</div>
+        <div class="po-desc">Instant, no fees</div>
+      </div>
+      <div class="po-right"><span class="highlight">Free</span></div>
+      <div class="po-radio"></div>
+    </div>
+    <div class="method-expand" id="expand-wf">
+      <div class="wf-upsell">
+        <strong>Pay instantly with your WorldFirst account</strong>
+        If you already have a WorldFirst account, sign in to pay directly from your balance. No fees, instant delivery.
+        <br>
+        <button class="wf-upsell-btn" onclick="event.stopPropagation()">Sign in to WorldFirst</button>
+      </div>
+    </div>
+
+    <!-- Pay in local currency -->
+    <div class="pay-option" onclick="selectPay(this, 'local')" id="localCurrencyOption">
+      <div class="po-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2c2.5 2.8 4 6.2 4 10s-1.5 7.2-4 10c-2.5-2.8-4-6.2-4-10s1.5-7.2 4-10z"/></svg>
+      </div>
+      <div class="po-body">
+        <div class="po-name" id="localCurrencyName">Pay in your local currency</div>
+        <div class="po-desc" id="localCurrencyDesc">Via WorldFirst</div>
+      </div>
+      <div class="po-right" id="localCurrencyRight">FX applied</div>
+      <div class="po-radio"></div>
+    </div>
+    <div class="method-expand" id="expand-local">
+      <!-- Conversion breakdown -->
+      <div id="conversionBreakdown" style="background: #fff; border: 1px solid #E5E7EB; border-radius: 8px; padding: 16px; margin-bottom: 12px;">
+        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px;">
+          <span style="font-size: 12px; color: #6B7280;">Invoice amount</span>
+          <span style="font-size: 14px; font-weight: 500;">$6,240.00 USD</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px;">
+          <span style="font-size: 12px; color: #6B7280;">WorldFirst live rate</span>
+          <span id="conversionRate" style="font-size: 14px; font-weight: 500;">—</span>
+        </div>
+        <div style="height: 1px; background: #F0F0F0; margin: 10px 0;"></div>
+        <div style="display: flex; justify-content: space-between; align-items: baseline;">
+          <span style="font-size: 12px; color: #6B7280;">You pay</span>
+          <span id="conversionTotal" style="font-size: 20px; font-weight: 700; letter-spacing: -0.02em;">—</span>
+        </div>
+        <div style="font-size: 11px; color: #9CA3AF; text-align: right; margin-top: 2px;">Live rate &middot; may vary at time of payment</div>
+      </div>
+      <div class="wf-upsell">
+        <strong>Pay in <span id="localCurrencyLabel">your local currency</span></strong>
+        To pay in a different currency, you'll need a WorldFirst account. Open one in under 5 minutes — hold balances in 20+ currencies, convert at competitive rates, and pay and collect money worldwide.
+        <br>
+        <div style="display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap;">
+          <button class="wf-upsell-btn" onclick="event.stopPropagation()">Open a WorldFirst account</button>
+          <button class="wf-upsell-btn" style="background: #1A1A1A;" onclick="event.stopPropagation(); toggleLocalCurrencies()">What other currencies can I pay in?</button>
+        </div>
+      </div>
+      <div class="currency-grid" id="currencyGrid" style="margin-top: 12px;">
+        <!-- Populated by JS based on country selection -->
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 5: Confirmation -->
+  <div class="step-panel" id="step5">
+    <div class="card" style="padding: 0; overflow: hidden;">
+      <div class="confirmation">
+        <div class="confirm-check">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div class="confirm-title">Payment initiated</div>
+        <div class="confirm-subtitle">
+          $6,240.00 USD to Shenzhen Hongda Electronics.<br>
+          You'll receive a confirmation email with tracking details.
+        </div>
+        <div class="confirm-ref">WF-PR-84720</div>
+      </div>
+      <div class="review-section">
+        <div class="review-label">What happens next</div>
+        <div style="font-size: 13px; line-height: 1.8; color: #6B7280;">
+          1. We verify the payment details<br>
+          2. Funds are converted and sent to the supplier<br>
+          3. Supplier receives payment in 1-3 business days<br>
+          4. Both parties are notified at each step
+        </div>
+      </div>
+    </div>
+    <button class="btn-secondary" onclick="resetFlow()" style="margin-top: 20px;">Done</button>
+  </div>
+
+  <div class="portal-footer">
+    WorldFirst &middot; Ant International<br>
+    <a href="#">Help</a> &middot; <a href="#">Terms</a> &middot; <a href="#">Privacy</a>
+  </div>
+</div>
+
+<script>
+  let currentStep = 1;
+  let selectedMethod = null;
+
+  const INVOICE_USD = 6240.00;
+
+  // Currency mapping with indicative rates
+  const countryCurrency = {
+    'US': { code: 'USD', name: 'US Dollar', symbol: '$', rate: 1 },
+    'GB': { code: 'GBP', name: 'British Pound', symbol: '£', rate: 0.7912 },
+    'AU': { code: 'AUD', name: 'Australian Dollar', symbol: 'A$', rate: 1.5340 },
+    'CA': { code: 'CAD', name: 'Canadian Dollar', symbol: 'C$', rate: 1.3610 },
+    'DE': { code: 'EUR', name: 'Euro', symbol: '€', rate: 0.9215 },
+    'FR': { code: 'EUR', name: 'Euro', symbol: '€', rate: 0.9215 },
+    'NL': { code: 'EUR', name: 'Euro', symbol: '€', rate: 0.9215 },
+    'JP': { code: 'JPY', name: 'Japanese Yen', symbol: '¥', rate: 149.85 },
+    'SG': { code: 'SGD', name: 'Singapore Dollar', symbol: 'S$', rate: 1.3402 },
+    'HK': { code: 'HKD', name: 'Hong Kong Dollar', symbol: 'HK$', rate: 7.8210 },
+    'NZ': { code: 'NZD', name: 'New Zealand Dollar', symbol: 'NZ$', rate: 1.6215 }
+  };
+
+  const allCurrencies = [
+    'USD', 'EUR', 'GBP', 'AUD', 'CAD', 'SGD', 'HKD', 'JPY',
+    'NZD', 'CHF', 'SEK', 'NOK', 'DKK', 'PLN', 'CZK', 'HUF',
+    'AED', 'THB', 'MYR', 'INR'
+  ];
+
+  let userLocalCurrency = null;
+
+  function formatAmount(amount, decimals) {
+    if (decimals === 0) return Math.round(amount).toLocaleString();
+    return amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  function updateLocalCurrency() {
+    const country = document.getElementById('countrySelect').value;
+    const info = countryCurrency[country];
+    if (info && info.code !== 'USD') {
+      userLocalCurrency = info;
+      const converted = INVOICE_USD * info.rate;
+      const decimals = info.code === 'JPY' ? 0 : 2;
+      const formatted = info.symbol + formatAmount(converted, decimals);
+      // Option label: "Pay in GBP"
+      document.getElementById('localCurrencyName').textContent = 'Pay in ' + info.code;
+      document.getElementById('localCurrencyDesc').textContent = 'Via WorldFirst';
+      document.getElementById('localCurrencyLabel').textContent = info.code;
+      document.getElementById('localCurrencyRight').innerHTML = '<span class="highlight">' + info.code + '</span>';
+      // Conversion breakdown inside panel
+      document.getElementById('conversionRate').textContent = '1 USD = ' + info.rate + ' ' + info.code;
+      document.getElementById('conversionTotal').textContent = formatted + ' ' + info.code;
+    } else if (info && info.code === 'USD') {
+      userLocalCurrency = null;
+      document.getElementById('localCurrencyName').textContent = 'Pay in another currency';
+      document.getElementById('localCurrencyDesc').textContent = 'Via WorldFirst';
+      document.getElementById('localCurrencyLabel').textContent = 'another currency';
+      document.getElementById('localCurrencyRight').textContent = 'FX applied';
+      document.getElementById('conversionRate').textContent = '—';
+      document.getElementById('conversionTotal').textContent = '—';
+    } else {
+      userLocalCurrency = null;
+      document.getElementById('localCurrencyName').textContent = 'Pay in your local currency';
+      document.getElementById('localCurrencyDesc').textContent = 'Via WorldFirst';
+      document.getElementById('localCurrencyLabel').textContent = 'your local currency';
+      document.getElementById('localCurrencyRight').textContent = 'FX applied';
+      document.getElementById('conversionRate').textContent = '—';
+      document.getElementById('conversionTotal').textContent = '—';
+    }
+    renderCurrencyGrid();
+  }
+
+  function renderCurrencyGrid() {
+    const grid = document.getElementById('currencyGrid');
+    grid.innerHTML = '';
+    allCurrencies.forEach(c => {
+      const chip = document.createElement('div');
+      chip.className = 'currency-chip';
+      if (userLocalCurrency && c === userLocalCurrency.code) {
+        chip.classList.add('local');
+      }
+      chip.textContent = c;
+      grid.appendChild(chip);
+    });
+  }
+
+  function toggleLocalCurrencies() {
+    const grid = document.getElementById('currencyGrid');
+    grid.classList.toggle('show');
+  }
+
+  function validateStep2() {
+    const country = document.getElementById('countrySelect').value;
+    const errEl = document.getElementById('step2Error');
+    if (!country) {
+      errEl.style.display = 'block';
+      document.getElementById('countrySelect').style.borderColor = '#DC2626';
+      document.getElementById('countrySelect').focus();
+      return;
+    }
+    errEl.style.display = 'none';
+    document.getElementById('countrySelect').style.borderColor = '';
+    goStep(3);
+  }
+
+  function copyAllBank(btn) {
+    const text = [
+      'Beneficiary: Shenzhen Hongda Electronics',
+      'Bank: China Merchants Bank',
+      'Account: 755928100410XXXX',
+      'SWIFT: CMBCCNBS',
+      'Reference: WF-PR-84720'
+    ].join('\n');
+    navigator.clipboard.writeText(text);
+    const orig = btn.textContent;
+    btn.textContent = 'Copied all';
+    btn.style.background = '#16A34A';
+    setTimeout(() => { btn.textContent = orig; btn.style.background = ''; }, 1200);
+  }
+
+  function showEntry(type) {
+    document.querySelectorAll('.entry-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+    document.getElementById('emailView').classList.remove('visible');
+    document.getElementById('waView').classList.remove('visible');
+    document.getElementById('portalView').classList.remove('visible');
+
+    if (type === 'email') document.getElementById('emailView').classList.add('visible');
+    if (type === 'whatsapp') document.getElementById('waView').classList.add('visible');
+    if (type === 'portal') {
+      resetFlow();
+      document.getElementById('portalView').classList.add('visible');
+    }
+  }
+
+  function openPortal() {
+    document.getElementById('emailView').classList.remove('visible');
+    document.getElementById('waView').classList.remove('visible');
+    document.getElementById('portalView').classList.add('visible');
+    document.querySelectorAll('.entry-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector('.entry-btn:last-child').classList.add('active');
+    resetFlow();
+  }
+
+  function goStep(n) {
+    document.getElementById('step' + currentStep).classList.remove('active');
+    document.getElementById('step' + n).classList.add('active');
+    currentStep = n;
+
+    for (let i = 1; i <= 4; i++) {
+      const bar = document.getElementById('bar' + i);
+      bar.className = 'step-line';
+      if (i < n) bar.classList.add('done');
+      if (i === n && n <= 4) bar.classList.add('current');
+      if (n === 5) bar.classList.add('done');
+    }
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function selectPay(el, method) {
+    document.querySelectorAll('.pay-option').forEach(o => o.classList.remove('selected'));
+    document.querySelectorAll('.method-expand').forEach(e => e.classList.remove('show'));
+    el.classList.add('selected');
+    selectedMethod = method;
+
+    const expandEl = document.getElementById('expand-' + method);
+    if (expandEl) {
+      expandEl.classList.add('show');
+      // Scroll the expand panel into view
+      setTimeout(() => expandEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
+    }
+  }
+
+  function doCopy(btn, text) {
+    navigator.clipboard.writeText(text);
+    const orig = btn.textContent;
+    btn.textContent = 'Copied';
+    btn.style.background = '#16A34A';
+    setTimeout(() => { btn.textContent = orig; btn.style.background = ''; }, 1200);
+  }
+
+  function resetFlow() {
+    currentStep = 1;
+    selectedMethod = null;
+    document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('step1').classList.add('active');
+    document.querySelectorAll('.pay-option').forEach(o => o.classList.remove('selected'));
+    document.querySelectorAll('.method-expand').forEach(e => e.classList.remove('show'));
+    document.getElementById('currencyGrid').classList.remove('show');
+    for (let i = 1; i <= 4; i++) {
+      const bar = document.getElementById('bar' + i);
+      bar.className = 'step-line';
+      if (i === 1) bar.classList.add('current');
+    }
+  }
+
+  // Init currency grid
+  renderCurrencyGrid();
+</script>
+
+</body>
+</html>
