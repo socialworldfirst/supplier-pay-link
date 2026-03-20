@@ -1,0 +1,41 @@
+[
+  {
+    "nameCn": "东莞恒丰制衣有限公司",
+    "nameEn": "Dongguan Hengfeng Garments Co., Ltd",
+    "address": "No. 18 Fumin Industrial Road, Humen Town, Dongguan, Guangdong 523900, China",
+    "categories": ["Hoodies & Sweats", "Streetwear", "Activewear", "T-Shirts", "Cut & Sew"],
+    "website": "https://www.hongyuapparel.com/",
+    "whatsapp": "+86 188 2670 3155",
+    "wechat": "hengfeng_export",
+    "email": "export@hengfeng-garments.com",
+    "approved": true
+  },
+  {
+    "nameCn": "深圳市创新电子科技有限公司",
+    "nameEn": "Shenzhen Innovation Electronics Co., Ltd",
+    "address": "Building 12, Baoan Technology Park, Xixiang Street, Baoan District, Shenzhen, Guangdong 518101, China",
+    "categories": ["Consumer Electronics", "LED Lighting", "Smart Home Devices"],
+    "whatsapp": "+86 135 9028 7766",
+    "wechat": "sz_innovation_tech",
+    "email": "sales@sz-innovation.com",
+    "approved": true
+  },
+  {
+    "nameCn": "义乌市华盛工艺品有限公司",
+    "nameEn": "Yiwu Huasheng Crafts Co., Ltd",
+    "address": "3rd Floor, Unit B, International Trade Center, Futian District, Yiwu, Zhejiang 322000, China",
+    "categories": ["Home Decor", "Seasonal Gifts", "Stationery"],
+    "website": "https://www.huashengcrafts.cn/",
+    "email": "info@huashengcrafts.cn",
+    "approved": true
+  },
+  {
+    "nameCn": "广州新世纪贸易有限公司",
+    "nameEn": "Guangzhou New Century Trading Co., Ltd",
+    "address": "Room 1501, Guangzhou Trade Tower, Tianhe District, Guangzhou, Guangdong 510620, China",
+    "categories": ["Textiles", "Fabrics"],
+    "website": "https://www.gznewcentury.com/",
+    "whatsapp": "+86 139 0223 4455",
+    "approved": false
+  }
+]

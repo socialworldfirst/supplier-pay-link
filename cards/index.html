@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verified Suppliers — WorldFirst</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: #1A1A1A;
+    background: #F5F6F8;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  .container {
+    max-width: 560px;
+    margin: 0 auto;
+  }
+  .idx-header {
+    text-align: center;
+    padding: 32px 0 28px;
+  }
+  .idx-header img { height: 22px; margin-bottom: 20px; }
+  .idx-header h1 {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .idx-header p {
+    font-size: 14px;
+    color: #888;
+  }
+  .idx-count {
+    font-size: 13px;
+    color: #999;
+    text-align: center;
+    margin-bottom: 16px;
+  }
+  .idx-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 32px;
+  }
+  .idx-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 18px;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.04);
+    text-decoration: none;
+    color: #1A1A1A;
+    transition: all 0.15s;
+  }
+  .idx-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06), 0 8px 20px rgba(0,0,0,0.06);
+  }
+  .idx-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #1A1A1A;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.5px;
+    flex-shrink: 0;
+  }
+  .idx-info {
+    flex: 1;
+    min-width: 0;
+  }
+  .idx-name {
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+  .idx-name-cn {
+    font-size: 12px;
+    color: #999;
+    margin-top: 1px;
+  }
+  .idx-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 6px;
+  }
+  .idx-tag {
+    background: #F5F6F8;
+    border-radius: 4px;
+    padding: 2px 7px;
+    font-size: 11px;
+    color: #888;
+  }
+  .idx-arrow {
+    flex-shrink: 0;
+  }
+  .idx-footer {
+    text-align: center;
+    padding: 16px 0 24px;
+  }
+  .idx-footer-logos {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+  .idx-footer-logos img.logo-wf { height: 13px; }
+  .idx-footer-logos img.logo-ant { height: 20px; }
+  .idx-footer-sep { width: 1px; height: 14px; background: #DDD; }
+  .idx-footer-tagline { font-size: 11px; color: #BBB; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="idx-header">
+    <img src="../wf-logo-nav.webp" alt="WorldFirst">
+    <h1>Verified Suppliers</h1>
+    <p>WorldFirst business users with verified accounts</p>
+  </div>
+
+  <div class="idx-count">3 suppliers</div>
+
+  <div class="idx-list">
+      <a class="idx-card" href="dongguan-hengfeng-garments-co-ltd.html">
+        <div class="idx-avatar">DH</div>
+        <div class="idx-info">
+          <div class="idx-name">Dongguan Hengfeng Garments Co., Ltd</div>
+          <div class="idx-name-cn">东莞恒丰制衣有限公司</div>
+          <div class="idx-tags"><span class="idx-tag">Hoodies &amp; Sweats</span><span class="idx-tag">Streetwear</span><span class="idx-tag">Activewear</span><span class="idx-tag">T-Shirts</span><span class="idx-tag">Cut &amp; Sew</span></div>
+        </div>
+        <svg class="idx-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 4L10 8L6 12" stroke="#CCC" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <a class="idx-card" href="shenzhen-innovation-electronics-co-ltd.html">
+        <div class="idx-avatar">SI</div>
+        <div class="idx-info">
+          <div class="idx-name">Shenzhen Innovation Electronics Co., Ltd</div>
+          <div class="idx-name-cn">深圳市创新电子科技有限公司</div>
+          <div class="idx-tags"><span class="idx-tag">Consumer Electronics</span><span class="idx-tag">LED Lighting</span><span class="idx-tag">Smart Home Devices</span></div>
+        </div>
+        <svg class="idx-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 4L10 8L6 12" stroke="#CCC" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <a class="idx-card" href="yiwu-huasheng-crafts-co-ltd.html">
+        <div class="idx-avatar">YH</div>
+        <div class="idx-info">
+          <div class="idx-name">Yiwu Huasheng Crafts Co., Ltd</div>
+          <div class="idx-name-cn">义乌市华盛工艺品有限公司</div>
+          <div class="idx-tags"><span class="idx-tag">Home Decor</span><span class="idx-tag">Seasonal Gifts</span><span class="idx-tag">Stationery</span></div>
+        </div>
+        <svg class="idx-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 4L10 8L6 12" stroke="#CCC" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+  </div>
+
+  <div class="idx-footer">
+    <div class="idx-footer-logos">
+      <img class="logo-wf" src="../wf-logo-nav.webp" alt="WorldFirst">
+      <div class="idx-footer-sep"></div>
+      <img class="logo-ant" src="../ant-logo.png" alt="Ant International">
+    </div>
+    <div class="idx-footer-tagline">The smarter way to pay China</div>
+  </div>
+</div>
+
+</body>
+</html>

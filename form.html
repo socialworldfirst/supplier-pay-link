@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>供应商信息登记 — Supplier Registration</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    color: #1A1A1A;
+    background: #F5F6F8;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    padding: 20px;
+  }
+
+  .container {
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  /* Header */
+  .form-header {
+    text-align: center;
+    padding: 32px 0 28px;
+  }
+  .form-header img {
+    height: 22px;
+    margin-bottom: 24px;
+  }
+  .form-header h1 {
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 4px;
+  }
+  .form-header .subtitle {
+    font-size: 14px;
+    color: #888;
+  }
+
+  /* Form card */
+  .form-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 28px 24px 32px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.06);
+  }
+
+  /* Section headings */
+  .section-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #FF0051;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #F0F0F0;
+  }
+
+  /* Field groups */
+  .field {
+    margin-bottom: 18px;
+  }
+  .field:last-child {
+    margin-bottom: 0;
+  }
+  .field label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: #1A1A1A;
+  }
+  .field label .en {
+    font-weight: 400;
+    color: #999;
+    font-size: 12px;
+    margin-left: 4px;
+  }
+  .field label .required {
+    color: #FF0051;
+    margin-left: 2px;
+  }
+  .field input,
+  .field textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid #E0E0E0;
+    border-radius: 10px;
+    font-size: 15px;
+    font-family: inherit;
+    color: #1A1A1A;
+    background: #FAFAFA;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+  }
+  .field input:focus,
+  .field textarea:focus {
+    border-color: #FF0051;
+    box-shadow: 0 0 0 3px rgba(255, 0, 81, 0.08);
+    background: #fff;
+  }
+  .field input::placeholder,
+  .field textarea::placeholder {
+    color: #C0C0C0;
+  }
+  .field textarea {
+    resize: vertical;
+    min-height: 70px;
+  }
+  .field .hint {
+    font-size: 12px;
+    color: #AAA;
+    margin-top: 4px;
+  }
+
+  /* Category tags input */
+  .tag-input-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 10px 12px;
+    border: 1.5px solid #E0E0E0;
+    border-radius: 10px;
+    background: #FAFAFA;
+    min-height: 46px;
+    cursor: text;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .tag-input-wrap:focus-within {
+    border-color: #FF0051;
+    box-shadow: 0 0 0 3px rgba(255, 0, 81, 0.08);
+    background: #fff;
+  }
+  .tag-input-wrap .tag-pill {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: #F0F0F0;
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 13px;
+    color: #444;
+  }
+  .tag-pill button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    color: #999;
+    padding: 0 2px;
+    line-height: 1;
+  }
+  .tag-pill button:hover { color: #FF0051; }
+  .tag-input-wrap input {
+    flex: 1;
+    min-width: 100px;
+    border: none;
+    outline: none;
+    font-size: 14px;
+    font-family: inherit;
+    background: transparent;
+    padding: 4px 0;
+    color: #1A1A1A;
+  }
+  .tag-input-wrap input::placeholder { color: #C0C0C0; }
+
+  /* Divider */
+  .divider {
+    height: 1px;
+    background: #F0F0F0;
+    margin: 24px 0;
+  }
+
+  /* Optional badge */
+  .optional-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 500;
+    color: #AAA;
+    background: #F5F5F5;
+    border-radius: 4px;
+    padding: 2px 6px;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+
+  /* Submit */
+  .submit-btn {
+    width: 100%;
+    padding: 15px;
+    background: #FF0051;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 8px;
+  }
+  .submit-btn:hover {
+    background: #E60048;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 0, 81, 0.25);
+  }
+  .submit-btn:active {
+    transform: translateY(0);
+  }
+  .submit-btn:disabled {
+    background: #CCC;
+    transform: none;
+    box-shadow: none;
+    cursor: not-allowed;
+  }
+
+  /* Success state */
+  .success-view {
+    display: none;
+    text-align: center;
+    padding: 48px 24px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.06);
+  }
+  .success-view.show {
+    display: block;
+  }
+  .success-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: #FF0051;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+  }
+  .success-view h2 {
+    font-size: 20px;
+    margin-bottom: 8px;
+  }
+  .success-view p {
+    font-size: 14px;
+    color: #888;
+    line-height: 1.6;
+  }
+
+  /* Footer */
+  .form-footer {
+    text-align: center;
+    padding: 24px 0;
+  }
+  .form-footer-logos {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+  .form-footer-logos img.logo-wf { height: 13px; }
+  .form-footer-logos img.logo-ant { height: 20px; }
+  .form-footer-sep {
+    width: 1px;
+    height: 14px;
+    background: #DDD;
+  }
+  .form-footer-tagline {
+    font-size: 11px;
+    color: #BBB;
+  }
+
+  /* Error state */
+  .field.error input,
+  .field.error textarea,
+  .field.error .tag-input-wrap {
+    border-color: #FF0051;
+  }
+  .field .error-msg {
+    display: none;
+    font-size: 12px;
+    color: #FF0051;
+    margin-top: 4px;
+  }
+  .field.error .error-msg {
+    display: block;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Header -->
+  <div class="form-header">
+    <img src="wf-logo-nav.webp" alt="WorldFirst">
+    <h1>供应商信息登记</h1>
+    <div class="subtitle">Supplier Registration Form</div>
+  </div>
+
+  <!-- Form -->
+  <form class="form-card" id="supplierForm" novalidate>
+
+    <div class="section-title">公司信息 Company Info</div>
+
+    <div class="field" id="field-nameCn">
+      <label>公司名称（中文）<span class="en">Company Name (Chinese)</span><span class="required">*</span></label>
+      <input type="text" name="nameCn" placeholder="例：东莞恒丰制衣有限公司" required>
+      <div class="error-msg">请填写中文公司名称 Please enter company name in Chinese</div>
+    </div>
+
+    <div class="field" id="field-nameEn">
+      <label>公司名称（英文）<span class="en">Company Name (English)</span><span class="required">*</span></label>
+      <input type="text" name="nameEn" placeholder="e.g. Dongguan Hengfeng Garments Co., Ltd" required>
+      <div class="error-msg">请填写英文公司名称 Please enter company name in English</div>
+    </div>
+
+    <div class="field" id="field-address">
+      <label>公司地址 <span class="en">Full Address</span><span class="required">*</span></label>
+      <textarea name="address" placeholder="例：广东省东莞市虎门镇富民工业路18号&#10;e.g. No. 18 Fumin Industrial Road, Humen Town, Dongguan, Guangdong 523900, China" required></textarea>
+      <div class="error-msg">请填写公司地址 Please enter address</div>
+    </div>
+
+    <div class="field" id="field-categories">
+      <label>产品类别 <span class="en">Product Categories</span><span class="required">*</span></label>
+      <div class="tag-input-wrap" id="tagWrap">
+        <input type="text" id="tagInput" placeholder="输入后按 Enter 添加 / Type and press Enter">
+      </div>
+      <div class="hint">逐个输入产品类别，按 Enter 键添加。Add categories one at a time.</div>
+      <div class="error-msg">请至少添加一个产品类别 Please add at least one category</div>
+      <input type="hidden" name="categories" id="categoriesHidden">
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section-title">联系方式 Contact Details <span class="optional-badge">选填 Optional</span></div>
+
+    <div class="field">
+      <label>网站 <span class="en">Website URL</span></label>
+      <input type="url" name="website" placeholder="https://www.example.com">
+    </div>
+
+    <div class="field">
+      <label>WhatsApp</label>
+      <input type="tel" name="whatsapp" placeholder="+86 188 2670 3155">
+      <div class="hint">请包含国家代码 Include country code</div>
+    </div>
+
+    <div class="field">
+      <label>微信号 <span class="en">WeChat ID</span></label>
+      <input type="text" name="wechat" placeholder="e.g. hengfeng_export">
+    </div>
+
+    <div class="field">
+      <label>邮箱 <span class="en">Email</span></label>
+      <input type="email" name="email" placeholder="export@company.com">
+    </div>
+
+    <button type="submit" class="submit-btn" id="submitBtn">提交信息 Submit</button>
+  </form>
+
+  <!-- Success -->
+  <div class="success-view" id="successView">
+    <div class="success-icon">
+      <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+        <path d="M8 16L14 22L24 10" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <h2>提交成功！</h2>
+    <p>感谢您的登记。我们将审核您的信息后生成供应商卡片。<br>
+    Thank you! We will review your information and generate your supplier card.</p>
+  </div>
+
+  <!-- Footer -->
+  <div class="form-footer">
+    <div class="form-footer-logos">
+      <img class="logo-wf" src="wf-logo-nav.webp" alt="WorldFirst">
+      <div class="form-footer-sep"></div>
+      <img class="logo-ant" src="ant-logo.png" alt="Ant International">
+    </div>
+    <div class="form-footer-tagline">The smarter way to pay China</div>
+  </div>
+
+</div>
+
+<script>
+// ── Configuration ──────────────────────────────────────────
+const GOOGLE_SCRIPT_URL = 'YOUR_GOOGLE_SCRIPT_URL_HERE';
+
+// ── Tag input ──────────────────────────────────────────────
+const tagWrap = document.getElementById('tagWrap');
+const tagInput = document.getElementById('tagInput');
+const categoriesHidden = document.getElementById('categoriesHidden');
+let tags = [];
+
+tagWrap.addEventListener('click', () => tagInput.focus());
+
+tagInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    const val = tagInput.value.trim();
+    if (val && !tags.includes(val)) {
+      tags.push(val);
+      renderTags();
+    }
+    tagInput.value = '';
+  }
+  if (e.key === 'Backspace' && tagInput.value === '' && tags.length > 0) {
+    tags.pop();
+    renderTags();
+  }
+});
+
+function renderTags() {
+  tagWrap.querySelectorAll('.tag-pill').forEach(el => el.remove());
+  tags.forEach((tag, i) => {
+    const pill = document.createElement('span');
+    pill.className = 'tag-pill';
+    pill.innerHTML = tag + '<button type="button" data-i="' + i + '">&times;</button>';
+    pill.querySelector('button').addEventListener('click', () => {
+      tags.splice(i, 1);
+      renderTags();
+    });
+    tagWrap.insertBefore(pill, tagInput);
+  });
+  categoriesHidden.value = tags.join(', ');
+}
+
+// ── Form submission ────────────────────────────────────────
+const form = document.getElementById('supplierForm');
+const submitBtn = document.getElementById('submitBtn');
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  // Clear errors
+  form.querySelectorAll('.field.error').forEach(f => f.classList.remove('error'));
+
+  // Validate required fields
+  let valid = true;
+  const nameCn = form.nameCn.value.trim();
+  const nameEn = form.nameEn.value.trim();
+  const address = form.address.value.trim();
+
+  if (!nameCn) { document.getElementById('field-nameCn').classList.add('error'); valid = false; }
+  if (!nameEn) { document.getElementById('field-nameEn').classList.add('error'); valid = false; }
+  if (!address) { document.getElementById('field-address').classList.add('error'); valid = false; }
+  if (tags.length === 0) { document.getElementById('field-categories').classList.add('error'); valid = false; }
+
+  if (!valid) return;
+
+  // Build payload
+  const payload = {
+    nameCn: nameCn,
+    nameEn: nameEn,
+    address: address,
+    categories: tags.join(', '),
+    website: form.website.value.trim(),
+    whatsapp: form.whatsapp.value.trim(),
+    wechat: form.wechat.value.trim(),
+    email: form.email.value.trim()
+  };
+
+  // Submit
+  submitBtn.disabled = true;
+  submitBtn.textContent = '提交中… Submitting…';
+
+  try {
+    const res = await fetch(GOOGLE_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    // no-cors means we can't read the response, but the request went through
+    form.style.display = 'none';
+    document.getElementById('successView').classList.add('show');
+  } catch (err) {
+    alert('提交失败，请稍后重试。\nSubmission failed. Please try again.');
+    submitBtn.disabled = false;
+    submitBtn.textContent = '提交信息 Submit';
+  }
+});
+</script>
+
+</body>
+</html>
