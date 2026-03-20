@@ -432,13 +432,19 @@
         </svg>
       </div>
       <div>
-        <div class="trust-title">WorldFirst Verified
-          <span class="trust-badge-inline">
-            <svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M4 0.5L5 2.5H7L5.5 4L6 6L4 5L2 6L2.5 4L1 2.5H3L4 0.5Z" fill="#EA580C"/></svg>
-            Established Trader
-          </span>
-        </div>
+        <div class="trust-title">WorldFirst Verified</div>
         <div class="trust-subtitle">Verified business account on WorldFirst</div>
+      </div>
+    </div>
+
+    <!-- Top supplier badge -->
+    <div style="padding:0 0 16px;position:relative;">
+      <span id="topBadge" onclick="toggleTooltip()" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:6px;font-size:11px;font-weight:600;background:#FFF7ED;color:#9A3412;cursor:pointer;">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M5 0.5L6.3 3.2H9.3L7 5.2L7.8 8.2L5 6.5L2.2 8.2L3 5.2L0.7 3.2H3.7L5 0.5Z" fill="#EA580C"/></svg>
+        Top Supplier in Dongguan
+      </span>
+      <div id="tooltip" style="display:none;position:absolute;top:32px;left:0;background:#1A1A1A;color:#fff;padding:10px 14px;border-radius:10px;font-size:12px;line-height:1.5;max-width:280px;z-index:10;box-shadow:0 4px 12px rgba(0,0,0,0.15);">
+        Top 20% by trade volume among WorldFirst-verified garment suppliers in Dongguan, based on payment activity in the last 12 months.
       </div>
     </div>
 
@@ -502,6 +508,21 @@
 
 <div class="toast" id="toast"></div>
 <script>
+function toggleTooltip() {
+  const tip = document.getElementById('tooltip');
+  if (tip.style.display === 'none') {
+    tip.style.display = 'block';
+    document.addEventListener('click', function hide(e) {
+      if (!document.getElementById('topBadge').contains(e.target) && !tip.contains(e.target)) {
+        tip.style.display = 'none';
+        document.removeEventListener('click', hide);
+      }
+    });
+  } else {
+    tip.style.display = 'none';
+  }
+}
+
 function copyText(text) {
   navigator.clipboard.writeText(text).then(() => {
     const t = document.getElementById('toast');
